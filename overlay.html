@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    /* Main pill container */
+    #pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-width: 420px;
+      height: 90px;
+
+      padding: 0 40px;
+
+      background: rgba(0, 0, 0, 0.55); /* transparent black */
+      border-radius: 999px; /* makes it oval */
+
+      box-shadow:
+        0 0 20px rgba(255,255,255,0.15),
+        0 6px 20px rgba(0,0,0,0.8);
+
+      backdrop-filter: blur(6px);
+    }
+
+    /* Text */
+    #rank {
+      font-size: 42px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 1px;
+
+      text-shadow:
+        0 0 6px rgba(255,255,255,0.4),
+        0 3px 8px rgba(0,0,0,0.9);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="pill">
+    <div id="rank">Loading…</div>
+  </div>
+
+  <script>
+    function getRankColor(rank) {
+    rank = rank.toLowerCase();
+
+    if (rank.includes("iron")) return "#6b6b6b";
+    if (rank.includes("bronze")) return "#b87333";
+    if (rank.includes("silver")) return "#cfd8dc";
+    if (rank.includes("gold")) return "#ffd700";
+    if (rank.includes("platinum")) return "#4fd1c5";
+    if (rank.includes("diamond")) return "#8b5cf6";
+
+    if (rank.includes("ascendant")) return "#00ff6a";
+    if (rank.includes("immortal")) return "#ff4655";
+    if (rank.includes("radiant")) return "#ffe66d";
+
+    return "white";
+  }
+
+  async function tick() {
+    try {
+      const res = await fetch("overlay.json?ts=" + Date.now());
+      const { rank, rr } = await res.json();
+
+      const el = document.getElementById("rank");
+
+      el.textContent = `${rank}  •  ${rr}RR`;
+
+      // Apply color
+      el.style.color = getRankColor(rank);
+
+    } catch {
+      document.getElementById("rank").textContent = "--";
+    }
+  }
+
+  tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
